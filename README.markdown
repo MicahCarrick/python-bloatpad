@@ -1,0 +1,1 @@
+I'm porting the "Bloatpad" from the GTK+ documentation for GtkApplication to Python so that I can submit a few bugs I've found. I'll update this README when it's finished. Right now it only partially works.
