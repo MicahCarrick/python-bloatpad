@@ -1,1 +1,13 @@
-I'm porting the "Bloatpad" from the GTK+ documentation for GtkApplication to Python so that I can submit a few bugs I've found. I'll update this README when it's finished. Right now it only partially works.
+Bloatpad Python Port
+====================
+
+This is a Python port of the "Bloatpad" application used as an example for 
+[GtkApplication](http://developer.gnome.org/gtk3/stable/GtkApplication.html) in 
+the GTK+ Reference Manual.
+
+I wrote it to get a grasp of the application menu and application menubar 
+concepts. It works for the most part. There are 2 issues:
+
+1. The F11 accellerator isn't working. Note sure why. 
+2. The GAction stuff seems a bit wonky. Not very pythonic. I've submitted
+   [Bug #678655](https://bugzilla.gnome.org/show_bug.cgi?id=678655).

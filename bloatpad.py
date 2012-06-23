@@ -103,23 +103,15 @@ class Window(Gtk.ApplicationWindow):
         self.add(grid)
         self.show_all()
         
-        # Gtk.ActionMap.add_action_entries() sure would be nice....
-        # do we really want to be playing with GVariants in python?
+        # Cannot use add_action_entries()
+        # see https://bugzilla.gnome.org/show_bug.cgi?id=678655
         
-        """
-        static GActionEntry win_entries[] = {
-          { "copy", window_copy, NULL, NULL, NULL },
-          { "paste", window_paste, NULL, NULL, NULL },
-          { "fullscreen", activate_toggle, NULL, "false", change_fullscreen_state },
-          { "justify", activate_radio, "s", "'left'", change_justify_state }
-        };
-        """
         # setup actions
         action = Gio.SimpleAction(name="copy")
         action.connect("activate", self.copy, textview)        
         self.add_action(action)
         
-        # is the UI XML "parse" intentionally?
+        # is the UI XML "parse" intentional?
         action = Gio.SimpleAction(name="paste")
         action.connect("activate", self.paste, textview)        
         self.add_action(action)
@@ -151,20 +143,6 @@ class Window(Gtk.ApplicationWindow):
             return
         
         action.set_state(state);
-        """
-        str = g_variant_get_string (state, NULL);
-          if (g_str_equal (str, "left"))
-            gtk_text_view_set_justification (text, GTK_JUSTIFY_LEFT);
-          else if (g_str_equal (str, "center"))
-            gtk_text_view_set_justification (text, GTK_JUSTIFY_CENTER);
-          else if (g_str_equal (str, "right"))
-            gtk_text_view_set_justification (text, GTK_JUSTIFY_RIGHT);
-          else
-            /* ignore this attempted change */
-            return;
-
-          g_simple_action_set_state (action, state);
-        """
             
     def activate_toggle(window, action, data=None):
         action.change_state(GLib.Variant('b', not action.get_state()))
@@ -211,14 +189,10 @@ class BloatPad(Gtk.Application):
         self.new_window()
         
     def on_startup(self, data=None):
-        """
-        Using self.add_action_entries() is not playing nice with introspection. 
-        I tried patching gi/overrides/Gio.py but the GLib.Variant stuff went 
-        over my head. I think a few of the GAction related classes need to be
-        tweaked. I need to submit a bug.
+    
+        # Cannot use add_action_entries()
+        # see https://bugzilla.gnome.org/show_bug.cgi?id=678655
         
-        For now, manually creating each action will work.
-        """
         action = Gio.SimpleAction(name="new")
         action.connect("activate", lambda a,b: self.activate())
         self.add_action(action)
