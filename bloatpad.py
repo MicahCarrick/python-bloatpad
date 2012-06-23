@@ -57,7 +57,7 @@ MENU_XML = """
 """
 
 class Window(Gtk.ApplicationWindow):
-    def __init__(self, application):
+    def __init__(self, application, giofile=None):
         Gtk.ApplicationWindow.__init__(self, 
                                        application=application,
                                        default_width=640,
@@ -110,7 +110,7 @@ class Window(Gtk.ApplicationWindow):
         action = Gio.SimpleAction(name="copy")
         action.connect("activate", self.copy, textview)        
         self.add_action(action)
-        
+
         # is the UI XML "parse" intentional?
         action = Gio.SimpleAction(name="paste")
         action.connect("activate", self.paste, textview)        
@@ -128,7 +128,12 @@ class Window(Gtk.ApplicationWindow):
         action.connect("activate", self.activate_radio)
         action.connect("change-state", self.change_justify_state, textview)
         self.add_action(action)
-
+        
+        # open file
+        if giofile:
+            contents = giofile.load_contents(giofile, None)
+            textview.get_buffer().set_text(contents)
+        
     def activate_radio(window, action, parameter, data=None):
         action.change_state(parameter)
     
@@ -168,11 +173,12 @@ class BloatPad(Gtk.Application):
     def __init__(self):
         Gtk.Application.__init__(self, 
                                  application_id="com.micahcarrick.Test.bloatpad",
-                                 flags=Gio.ApplicationFlags.HANDLES_OPEN,
+                                 #flags=Gio.ApplicationFlags.HANDLES_OPEN,
                                  inactivity_timeout=30000,
                                  register_session=True)
-        self.connect("startup", self.on_startup)     
-        self.connect("activate", self.on_activate)
+        self.connect("startup", self.startup)     
+        self.connect("activate", self.activate)
+        #self.connect("open", self.open)
 
     def about_activated(self, action, data=None):
         dialog = Gtk.AboutDialog(program_name="Python Bloatpad",
@@ -181,14 +187,19 @@ class BloatPad(Gtk.Application):
         dialog.run()
         dialog.destroy()
 
-    def new_window(self, file=None):
-        window = Window(self)
+    def new_window(self, filename=None):
+        window = Window(self, filename)
         window.show()
+
+    def open(self, application, files, n_files, hint):
+        for giofile in files:
+            self.new_window(self, giofile)
+        
     
-    def on_activate(self, data=None):
+    def activate(self, data=None):
         self.new_window()
         
-    def on_startup(self, data=None):
+    def startup(self, data=None):
     
         # Cannot use add_action_entries()
         # see https://bugzilla.gnome.org/show_bug.cgi?id=678655
@@ -209,8 +220,7 @@ class BloatPad(Gtk.Application):
         builder.add_from_string(MENU_XML)
         self.set_menubar(builder.get_object("menubar"))
         self.set_app_menu(builder.get_object("app-menu"))
-
-
+            
 def install_excepthook():
     """ Make sure we exit when an unhandled exception occurs. """
     old_hook = sys.excepthook
@@ -225,5 +235,6 @@ if __name__ == "__main__":
     install_excepthook()
     app = BloatPad()
     app.add_accelerator("F11", "win.fullscreen", None); # <-- does not work
-    app.run(sys.argv)
+    r = app.run(sys.argv)
+    sys.exit(r)
     
