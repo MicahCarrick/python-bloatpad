@@ -1,5 +1,5 @@
-Bloatpad Python Port
-====================
+Python Bloatpad
+===============
 
 This is a Python port of the "Bloatpad" application used as an example for 
 [GtkApplication](http://developer.gnome.org/gtk3/stable/GtkApplication.html) in 

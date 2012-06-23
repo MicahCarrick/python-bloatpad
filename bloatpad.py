@@ -169,7 +169,7 @@ class BloatPad(Gtk.Application):
         Gtk.Application.__init__(self, 
                                  application_id="com.micahcarrick.Test.bloatpad",
                                  flags=Gio.ApplicationFlags.HANDLES_OPEN,
-                                 #inactivity_timeout=30000,
+                                 inactivity_timeout=30000,
                                  register_session=True)
         self.connect("startup", self.on_startup)     
         self.connect("activate", self.on_activate)
