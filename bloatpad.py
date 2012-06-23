@@ -36,8 +36,8 @@ MENU_XML = """
           <attribute name='accel'>&lt;Primary&gt;c</attribute>
         </item>
         <item>
-          <attribute name='label' translatable='yes'>_Parse</attribute>
-          <attribute name='action'>win.parse</attribute>
+          <attribute name='label' translatable='yes'>_Paste</attribute>
+          <attribute name='action'>win.paste</attribute>
           <attribute name='accel'>&lt;Primary&gt;v</attribute>
         </item>
       </section>
@@ -167,7 +167,7 @@ class Window(Gtk.ApplicationWindow):
     def paste(self, action, state, textview):
         # textview added as user data
         clipboard = textview.get_clipboard(Gdk.SELECTION_CLIPBOARD)
-        textview.get_buffer().paste_clipboard(clipboard)
+        textview.get_buffer().paste_clipboard(clipboard, None, True)
                                        
 class BloatPad(Gtk.Application):
     def __init__(self):
